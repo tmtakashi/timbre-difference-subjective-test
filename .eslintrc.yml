@@ -1,6 +1,7 @@
 env:
   browser: true
   es2020: true
+  node: true
 extends:
   - 'plugin:react/recommended'
   - google
@@ -16,3 +17,6 @@ plugins:
   - react
   - '@typescript-eslint'
   - prettier
+rules:
+  react/prop-types: 0
+  "@typescript-eslint/no-var-requires": "off"
