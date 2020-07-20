@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import PlayerSlider from '../components/PlayerSlider';
-import Button from '@material-ui/core/Button';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Container from '@material-ui/core/Container';
 import getCombinations from '../utils/getCombinations';
 import shuffle from '../utils/shuffle';
@@ -26,25 +24,9 @@ const Production: React.FC<Props> = ({ participant }) => {
       setFilesSet(true);
     })
   }, [])
+
   const handleChange = (event: any, newValue: any) => {
     setValue(newValue);
-  };
-
-
-  const playAudio = (selection: 'A' | 'B') => {
-    switch (selection) {
-      case 'A':
-        (document.getElementById('A') as HTMLAudioElement).play()
-        break;
-      case 'B':
-        (document.getElementById('B') as HTMLAudioElement).play()
-      default:
-        break;
-    }
-  }
-
-  const onClickNext = () => {
-    setCounter(counter + 1)
   };
 
   return (
@@ -58,22 +40,12 @@ const Production: React.FC<Props> = ({ participant }) => {
                 You are selecting <span style={{ fontWeight: 'bold' }}>{value}</span>
               </div>
             <PlayerSlider
+              counter={counter}
+              setCounter={setCounter}
               aFileName={combinations[counter - 1][0]}
               bFileName={combinations[counter - 1][1]}
-              onClickPlayButton={playAudio}
               onSliderChange={handleChange}
             />
-              <div style={{ textAlign: 'center', marginTop: '150px' }}>
-                <Button
-                  onClick={onClickNext}
-                  size="large"
-                  variant="contained"
-                  color="secondary"
-                  endIcon={<NavigateNextIcon />}
-                >
-                  Next
-                </Button>
-              </div>
             </Container>
           </>
         )}
