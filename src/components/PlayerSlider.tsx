@@ -1,67 +1,131 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
+import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Slider from '@material-ui/core/Slider';
 
 interface Props {
+  counter: number;
+  setCounter: React.Dispatch<React.SetStateAction<number>>; 
   aFileName: string;
   bFileName: string;
-  onClickPlayButton: (selection: 'A' | 'B') => void;
   onSliderChange: (event: any, newValue: any) => void
 }
 
-const PlayerSlider: React.FC<Props> = ({ aFileName, bFileName, onClickPlayButton, onSliderChange }) => {
+const PlayerSlider: React.FC<Props> = ({ counter, setCounter, aFileName, bFileName, onSliderChange }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const refA = useRef<HTMLAudioElement>(null);
+  const refB = useRef<HTMLAudioElement>(null);
+  useEffect(() => {
+    const nodeA = refA.current;
+    const nodeB = refB.current;
+    if (nodeA && nodeB) {
+      nodeA.addEventListener("ended", () => {
+        setIsPlaying(false);
+      });
+      nodeB.addEventListener("ended", () => {
+        setIsPlaying(false);
+      });
+    }
+  }, [refA, refB]);
+
+  const playAudio = (selection: 'A' | 'B') => {
+    const nodeA = refA.current;
+    const nodeB = refB.current;
+    if (nodeA && nodeB) {
+      switch (selection) {
+        case 'A':
+          nodeA.load();
+          nodeA.play();
+          break;
+        case 'B':
+          nodeB.load();
+          nodeB.play();
+          break;
+        default:
+          break;
+      }
+      setIsPlaying(true);
+    }
+  }
+
+  const onClickNext = () => {
+    const nodeA = refA.current;
+    const nodeB = refB.current;
+    if (nodeA && nodeB) {
+      nodeA.pause();
+      nodeB.pause();
+    }
+    setCounter(counter + 1);
+    setIsPlaying(false);
+  };
+
   return (
-  <Grid
-    style={{textAlign: 'center'}}
-    alignItems="center"
-    justify="center"
-    container
-  >
+  <>
     <Grid
-      item
-      xs={2}>
-        <p>A</p>
+      style={{textAlign: 'center'}}
+      alignItems="center"
+      justify="center"
+      container
+    >
+      <Grid
+        item
+        xs={2}>
+          <p>A</p>
+          <Button
+            onClick={() => playAudio('A')}
+            disabled={isPlaying}
+            variant="contained"
+            color="primary"
+            endIcon={<PlayCircleFilledIcon />}
+          >
+            Play
+          </Button>
+        <audio ref={refA} id="A" src={aFileName}></audio>
+      </Grid>
+      <Grid
+        item
+        xs={6}>
+        <Slider
+          defaultValue={5}
+          onChange={onSliderChange}
+          aria-labelledby="discrete-slider"
+          valueLabelDisplay="auto"
+          step={1}
+          marks
+          min={0}
+          max={10}
+        />
+      </Grid>
+      <Grid
+        item
+        xs={2}>
+        <p>B</p>
         <Button
-          onClick={() => onClickPlayButton('A')}
+          onClick={() => playAudio('B')}
+          disabled={isPlaying}
           variant="contained"
           color="primary"
           endIcon={<PlayCircleFilledIcon />}
         >
           Play
         </Button>
-      <audio id="A" src={aFileName}></audio>
+        <audio ref={refB} id="B" src={bFileName}></audio>
+      </Grid>
     </Grid>
-    <Grid
-      item
-      xs={6}>
-      <Slider
-        defaultValue={5}
-        onChange={onSliderChange}
-        aria-labelledby="discrete-slider"
-        valueLabelDisplay="auto"
-        step={1}
-        marks
-        min={0}
-        max={10}
-      />
-    </Grid>
-    <Grid
-      item
-      xs={2}>
-      <p>B</p>
+    <div style={{ textAlign: 'center', marginTop: '150px' }}>
       <Button
-        onClick={() => onClickPlayButton('B')}
+        onClick={onClickNext}
+        size="large"
         variant="contained"
-        color="primary"
-        endIcon={<PlayCircleFilledIcon />}
+        color="secondary"
+        endIcon={<NavigateNextIcon />}
       >
-        Play
+        Next
       </Button>
-      <audio id="B" src={bFileName}></audio>
-    </Grid>
-  </Grid>
+    </div>
+  </>
   )
 }
 
