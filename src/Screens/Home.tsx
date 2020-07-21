@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from "react-router-dom";
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -7,14 +7,16 @@ const { ipcRenderer } = require('electron');
 interface Props {
   participant: string;
   setParticipant: React.Dispatch<React.SetStateAction<string>>;
+  setDataPath: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const Home: React.FC<Props> = ({participant, setParticipant}) => {
+const Home: React.FC<Props> = ({participant, setParticipant, setDataPath}) => {
   const history = useHistory();
   const handleOnClick = () => {
     ipcRenderer.send('request-save-file', participant);
     ipcRenderer.on('save-file-reply', (event: any, arg: any) => {
-      if (arg === 'next') {
+      if (arg.goNext) {
+        setDataPath(arg.path);
         history.push('/production', { participant });
         return;
       }

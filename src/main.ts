@@ -37,12 +37,13 @@ ipcMain.on('request-save-file', (event: any, arg: any[]) => {
     properties: ['openDirectory']
   }).then((result: any) => {
     if (!result.canceled) {
-      fs.writeFile(result.filePaths[0] + `/${arg}.txt`, '', (err: any) => {
+      const path = result.filePaths[0] + `/${arg}.json`;
+      fs.writeFileSync(path, JSON.stringify([]), (err: any) => {
         if (err) {
           dialog.showErrorBox("Error", err)
         }
-        event.reply('save-file-reply', 'next');
       });
+      event.reply('save-file-reply', {goNext: true, path });
       return;
     }
     event.reply('save-file-reply', 'stay');
@@ -50,10 +51,9 @@ ipcMain.on('request-save-file', (event: any, arg: any[]) => {
     dialog.showErrorBox("Error", err)
     event.reply('save-file-reply', 'stay');
   })
-  
 });
 
-ipcMain.on('request-production-wav-list', (event: any, arg: any[]) => {
+ipcMain.on('request-production-wav-list', (event: any, arg: any) => {
   dialog.showOpenDialog(win, {
     properties: ['openDirectory']
   }).then((result: any) => {
@@ -71,4 +71,14 @@ ipcMain.on('request-production-wav-list', (event: any, arg: any[]) => {
   }).catch((err: any) => {
     dialog.showErrorBox("Error", err)
   })
+})
+
+ipcMain.on('write-value-to-file', (event: any, arg: any) => {
+  const json = JSON.parse(fs.readFileSync(arg.dataPath, 'utf8'));
+  json.push({
+    A: arg.aFileName,
+    B: arg.bFileName,
+    value: arg.value
+  });
+  fs.writeFileSync(arg.dataPath, JSON.stringify(json, null, 4));
 })

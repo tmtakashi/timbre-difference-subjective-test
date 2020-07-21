@@ -4,17 +4,22 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Slider from '@material-ui/core/Slider';
+const { ipcRenderer } = require('electron');
 
 interface Props {
   counter: number;
   setCounter: React.Dispatch<React.SetStateAction<number>>; 
   aFileName: string;
   bFileName: string;
+  value: number;
+  setValue: React.Dispatch<React.SetStateAction<number>>;
+  dataPath: string;
   onSliderChange: (event: any, newValue: any) => void
 }
 
-const PlayerSlider: React.FC<Props> = ({ counter, setCounter, aFileName, bFileName, onSliderChange }) => {
+const PlayerSlider: React.FC<Props> = ({ counter, setCounter, aFileName, bFileName, value, setValue, dataPath, onSliderChange }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const sliderRef = useRef<HTMLSpanElement>(null);
   const refA = useRef<HTMLAudioElement>(null);
   const refB = useRef<HTMLAudioElement>(null);
   useEffect(() => {
@@ -57,8 +62,10 @@ const PlayerSlider: React.FC<Props> = ({ counter, setCounter, aFileName, bFileNa
       nodeA.pause();
       nodeB.pause();
     }
+    ipcRenderer.send('write-value-to-file', { dataPath, counter, value, aFileName, bFileName });
     setCounter(counter + 1);
     setIsPlaying(false);
+    setValue(5);
   };
 
   return (
@@ -89,7 +96,9 @@ const PlayerSlider: React.FC<Props> = ({ counter, setCounter, aFileName, bFileNa
         xs={6}>
         <Slider
           defaultValue={5}
+          ref={sliderRef}
           onChange={onSliderChange}
+          value={value}
           aria-labelledby="discrete-slider"
           valueLabelDisplay="auto"
           step={1}
