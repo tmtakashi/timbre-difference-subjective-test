@@ -5,5 +5,5 @@ export default (list: string[]): string[][] => {
       result.push([list[i], list[j]]);
     }
   }
-  return result
-}
+  return result;
+};

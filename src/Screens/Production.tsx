@@ -3,6 +3,7 @@ import PlayerSlider from "../components/PlayerSlider";
 import Container from "@material-ui/core/Container";
 import getCombinations from "../utils/getCombinations";
 import shuffle from "../utils/shuffle";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { ipcRenderer } = require("electron");
 
 interface Props {
