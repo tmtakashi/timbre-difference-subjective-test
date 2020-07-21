@@ -30,17 +30,19 @@ const theme = createMuiTheme({
 
 const Main = withRouter(({ location }) => {
   const [participant, setParticipant] = useState('');
+  const [dataPath, setDataPath] = useState('');
   return (
     <div>
       {location.pathname === '/' &&
       <Home
         participant={participant}
         setParticipant={setParticipant}
+        setDataPath={setDataPath}
       />
       }
       <Route path="/production">
         <Production
-          participant={participant}
+          dataPath={dataPath}
         />
       </Route>
     </div>

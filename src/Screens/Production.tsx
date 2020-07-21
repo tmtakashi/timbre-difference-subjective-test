@@ -6,10 +6,10 @@ import shuffle from '../utils/shuffle';
 const { ipcRenderer } = require('electron');
 
 interface Props {
-  participant: string;
+  dataPath: string;
 }
 
-const Production: React.FC<Props> = ({ participant }) => {
+const Production: React.FC<Props> = ({ dataPath }) => {
   const [filesSet, setFilesSet] = useState(false);
   const [combinations, setCombinations] = useState([[]] as string[][])
   const [numWavCombination, setNumCombination] = useState(0);
@@ -33,10 +33,10 @@ const Production: React.FC<Props> = ({ participant }) => {
       <>
         { filesSet && (
           <>
-            No. {counter} / {numWavCombination}
+            
             <Container>
               <div style={{ textAlign: 'center', marginTop: '50px', marginBottom: '70px', fontSize: '30px' }}>
-                <p>Hello {participant}</p>
+                <p>No. {counter} / {numWavCombination}</p>
                 You are selecting <span style={{ fontWeight: 'bold' }}>{value}</span>
               </div>
             <PlayerSlider
@@ -45,6 +45,9 @@ const Production: React.FC<Props> = ({ participant }) => {
               aFileName={combinations[counter - 1][0]}
               bFileName={combinations[counter - 1][1]}
               onSliderChange={handleChange}
+              setValue={setValue}
+              value={value}
+              dataPath={dataPath}
             />
             </Container>
           </>
