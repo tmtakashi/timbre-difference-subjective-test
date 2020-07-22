@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PlayerSlider from "../components/PlayerSlider";
 import Container from "@material-ui/core/Container";
+import NavigateNextIcon from "@material-ui/icons/NavigateNext";
+import FolderOpenIcon from "@material-ui/icons/FolderOpen";
+import Button from "@material-ui/core/Button";
 import getCombinations from "../utils/getCombinations";
 import shuffle from "../utils/shuffle";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -12,19 +15,25 @@ interface Props {
 
 const Production: React.FC<Props> = ({ dataPath }) => {
   const [filesSet, setFilesSet] = useState(false);
+  const [wavDirectory, setWavDirectory] = useState("");
   const [combinations, setCombinations] = useState([[]] as string[][]);
   const [numWavCombination, setNumCombination] = useState(0);
   const [value, setValue] = useState(5);
   const [counter, setCounter] = useState(1);
-  useEffect(() => {
+
+  const onClickSelectDir = () => {
     ipcRenderer.send("request-production-wav-list");
     ipcRenderer.on("production-wav-list-reply", (event: any, arg: any) => {
       const cmb = shuffle(getCombinations(arg));
+      setWavDirectory(arg);
       setCombinations(cmb);
       setNumCombination(cmb.length);
-      setFilesSet(true);
     });
-  }, []);
+  };
+
+  const onBeginExperiment = () => {
+    setFilesSet(true);
+  };
 
   const handleChange = (event: any, newValue: any) => {
     setValue(newValue);
@@ -32,6 +41,34 @@ const Production: React.FC<Props> = ({ dataPath }) => {
 
   return (
     <>
+      {!filesSet && (
+        <Container>
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "200px",
+            }}
+          >
+            <Button
+              style={{ marginBottom: "50px" }}
+              onClick={onClickSelectDir}
+              variant="contained"
+              startIcon={<FolderOpenIcon />}
+            >
+              Select sound file directory
+            </Button>
+            {wavDirectory && <div>{wavDirectory.length} wav files loaded.</div>}
+            <br></br>
+            <Button
+              variant="contained"
+              onClick={onBeginExperiment}
+              endIcon={<NavigateNextIcon />}
+            >
+              Begin Experiment
+            </Button>
+          </div>
+        </Container>
+      )}
       {filesSet && (
         <>
           <Container>
