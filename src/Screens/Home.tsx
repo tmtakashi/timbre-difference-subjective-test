@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -8,36 +8,51 @@ const { ipcRenderer } = require("electron");
 interface Props {
   participant: string;
   setParticipant: React.Dispatch<React.SetStateAction<string>>;
+  dataPath: string;
   setDataPath: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const Home: React.FC<Props> = ({
   participant,
   setParticipant,
+  dataPath,
   setDataPath,
 }) => {
   const history = useHistory();
-  const handleOnClickNext = () => {
-    ipcRenderer.send("request-save-file", participant);
-    ipcRenderer.on("save-file-reply", (event: any, arg: any) => {
-      if (arg.goNext) {
-        setDataPath(arg.path);
-        history.push("/production", { participant });
-        return;
+  const [isPathSelected, setIsPathSelected] = useState(false);
+  const handleOnClickNext = async () => {
+    const { goNext, dataFilePath } = await ipcRenderer.invoke(
+      "request-save-file",
+      {
+        participant,
+        dataPath,
       }
+    );
+    if (goNext) {
+      setDataPath(dataFilePath);
+      history.push("/production", { participant });
       return;
-    });
+    }
+    return;
   };
 
-  const handleOnClickSelectPath = () => {};
+  const handleOnClickSelectPath = async () => {
+    const path = await ipcRenderer
+      .invoke("request-select-save-dir")
+      .catch((err: Error) => {
+        console.log(err);
+        return;
+      });
+    setDataPath(path);
+    setIsPathSelected(true);
+  };
 
   return (
     <>
       <div
         style={{
-          display: "flex",
-          justifyContent: "center",
-          marginTop: "200px",
+          textAlign: "center",
+          marginTop: "100px",
         }}
       >
         <h2>Enter participant&apos;s name</h2>
@@ -48,10 +63,21 @@ const Home: React.FC<Props> = ({
         />
       </div>
       <div style={{ textAlign: "center", marginTop: "120px" }}>
-        <Button onClick={} variant="outlined">
+        <Button
+          style={{ marginBottom: "20px" }}
+          disabled={!participant}
+          onClick={handleOnClickSelectPath}
+          variant="outlined"
+        >
           Select result file path
         </Button>
-        <Button onClick={handleOnClickNext} variant="contained">
+        {Boolean(dataPath) && <div>{dataPath}</div>}
+        <br></br>
+        <Button
+          disabled={!isPathSelected}
+          onClick={handleOnClickNext}
+          variant="contained"
+        >
           Start experiment
         </Button>
       </div>

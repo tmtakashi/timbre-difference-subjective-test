@@ -32,6 +32,7 @@ const Main = withRouter(({ location }) => {
         <Home
           participant={participant}
           setParticipant={setParticipant}
+          dataPath={dataPath}
           setDataPath={setDataPath}
         />
       )}

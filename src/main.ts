@@ -1,5 +1,5 @@
 const electron = require("electron");
-const { dialog, ipcMain } = require("electron");
+const { dialog, ipcMain, IpcMainEvent } = require("electron");
 const fs = require("fs");
 const path = require("path");
 
@@ -32,28 +32,32 @@ electron.app.on("activate", () => {
   }
 });
 
-ipcMain.on("request-save-file", (event: any, arg: any[]) => {
-  dialog
+ipcMain.handle("request-select-save-dir", (): string => {
+  const path = dialog
     .showOpenDialog(win, {
       properties: ["openDirectory"],
     })
     .then((result: any) => {
       if (!result.canceled) {
-        const path = result.filePaths[0] + `/${arg}.json`;
-        fs.writeFileSync(path, JSON.stringify([]), (err: any) => {
-          if (err) {
-            dialog.showErrorBox("Error", err);
-          }
-        });
-        event.reply("save-file-reply", { goNext: true, path });
-        return;
+        const path = result.filePaths[0];
+        return path;
       }
-      event.reply("save-file-reply", "stay");
     })
-    .catch((err: any) => {
-      dialog.showErrorBox("Error", err);
-      event.reply("save-file-reply", "stay");
+    .catch((err: Error) => {
+      console.log(err);
     });
+  return path;
+});
+
+ipcMain.handle("request-save-file", (event: typeof IpcMainEvent, arg: any) => {
+  const dataFilePath = `${arg.dataPath}/${arg.participant}.json`;
+  fs.writeFileSync(dataFilePath, JSON.stringify([]), (err: Error) => {
+    if (err) {
+      dialog.showErrorBox("Error", err.message);
+      return { goNext: false };
+    }
+  });
+  return { goNext: true, dataFilePath };
 });
 
 ipcMain.on("request-production-wav-list", (event: any, arg: any) => {
