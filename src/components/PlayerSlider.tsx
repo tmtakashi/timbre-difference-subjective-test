@@ -18,6 +18,10 @@ interface Props {
   onSliderChange: (event: any, newValue: any) => void;
 }
 
+interface IsPlayed {
+  [key: string]: boolean;
+}
+
 const PlayerSlider: React.FC<Props> = ({
   counter,
   setCounter,
@@ -29,21 +33,45 @@ const PlayerSlider: React.FC<Props> = ({
   onSliderChange,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlayed, setIsPlayed] = useState<IsPlayed>({ A: false, B: false });
+  const [isBothPlayed, setIsBothPlayed] = useState(false);
   const sliderRef = useRef<HTMLSpanElement>(null);
   const refA = useRef<HTMLAudioElement>(null);
   const refB = useRef<HTMLAudioElement>(null);
+
   useEffect(() => {
     const nodeA = refA.current;
     const nodeB = refB.current;
+    const onEndedA = () => {
+      setIsPlaying(false);
+      if (!isPlayed.A) {
+        setIsPlayed({ ...isPlayed, A: true });
+      }
+    };
+    const onEndedB = () => {
+      setIsPlaying(false);
+      if (!isPlayed.B) {
+        setIsPlayed({ ...isPlayed, B: true });
+      }
+    };
     if (nodeA && nodeB) {
-      nodeA.addEventListener("ended", () => {
-        setIsPlaying(false);
-      });
-      nodeB.addEventListener("ended", () => {
-        setIsPlaying(false);
-      });
+      nodeA.addEventListener("ended", onEndedA);
+      nodeB.addEventListener("ended", onEndedB);
+      return () => {
+        nodeA.removeEventListener("ended", onEndedA);
+        nodeB.removeEventListener("ended", onEndedB);
+      };
     }
-  }, [refA, refB]);
+  }, [refA, refB, isPlayed, setIsPlayed]);
+
+  useEffect(() => {
+    console.log(isPlayed);
+    const bothPlayed = isPlayed.A && isPlayed.B;
+    if (bothPlayed) {
+      console.log("foo");
+      setIsBothPlayed(true);
+    }
+  }, [isPlayed, setIsBothPlayed]);
 
   const playAudio = (selection: "A" | "B") => {
     const nodeA = refA.current;
@@ -82,6 +110,8 @@ const PlayerSlider: React.FC<Props> = ({
     setCounter(counter + 1);
     setIsPlaying(false);
     setValue(5);
+    setIsPlayed({ A: false, B: false });
+    setIsBothPlayed(false);
   };
 
   return (
@@ -135,6 +165,7 @@ const PlayerSlider: React.FC<Props> = ({
       </Grid>
       <div style={{ textAlign: "center", marginTop: "150px" }}>
         <Button
+          disabled={!isBothPlayed}
           onClick={onClickNext}
           size="large"
           variant="contained"
