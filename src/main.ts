@@ -3,6 +3,7 @@ const { dialog, ipcMain, IpcMainEvent } = require("electron");
 const fs = require("fs");
 const path = require("path");
 
+electron.BrowserWindow;
 let win: any;
 // eslint-disable-next-line require-jsdoc
 function createWindow() {
@@ -14,11 +15,12 @@ function createWindow() {
     },
   });
 
-  const path = require("path");
   win.loadFile(path.join(__dirname, "./index.html"));
 }
 
-electron.app.whenReady().then(createWindow);
+electron.app.whenReady().then(() => {
+  createWindow();
+});
 
 electron.app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
