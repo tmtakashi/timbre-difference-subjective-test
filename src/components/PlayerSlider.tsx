@@ -4,6 +4,7 @@ import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Slider from "@material-ui/core/Slider";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { ipcRenderer } = require("electron");
 
 interface Props {
