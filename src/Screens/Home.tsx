@@ -64,14 +64,14 @@ const Home: React.FC<Props> = ({
       </div>
       <div style={{ textAlign: "center", marginTop: "120px" }}>
         <Button
+          style={{ marginBottom: "20px" }}
           disabled={!participant}
           onClick={handleOnClickSelectPath}
           variant="outlined"
         >
           Select result file path
         </Button>
-        <br></br>
-        {Boolean(dataPath) && dataPath}
+        {Boolean(dataPath) && <div>{dataPath}</div>}
         <br></br>
         <Button
           disabled={!isPathSelected}
