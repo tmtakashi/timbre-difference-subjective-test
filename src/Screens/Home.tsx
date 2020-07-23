@@ -78,7 +78,7 @@ const Home: React.FC<Props> = ({
       </div>
       <div style={{ textAlign: "center", marginTop: "50px" }}>
         <Button
-          style={{ marginBottom: "100px" }}
+          style={{ marginBottom: "50px" }}
           startIcon={<FolderOpenIcon />}
           disabled={!participant}
           onClick={handleOnClickSelectPath}
@@ -86,7 +86,7 @@ const Home: React.FC<Props> = ({
         >
           Select result file path
         </Button>
-        {Boolean(dataPath) && <div>{dataPath}</div>}
+        <div style={{ height: "50px" }}>{Boolean(dataPath) && dataPath}</div>
         <div
           style={{
             display: "flex",

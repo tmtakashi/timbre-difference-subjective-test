@@ -31,7 +31,9 @@ const SelectWavDirectory: React.FC<Props> = ({
         >
           Select sound file directory
         </Button>
-        {wavDirectory && <div>{wavDirectory.length} wav files loaded.</div>}
+        <div style={{ height: "50px" }}>
+          {wavDirectory && `${wavDirectory.length} wav files loaded.`}
+        </div>
         <br></br>
         <Button
           variant="contained"
