@@ -9,6 +9,7 @@ import { useHistory } from "react-router-dom";
 const { ipcRenderer } = require("electron");
 
 interface Props {
+  isMainExperiment: boolean;
   counter: number;
   setCounter: React.Dispatch<React.SetStateAction<number>>;
   numWavCombination: number;
@@ -25,6 +26,7 @@ interface IsPlayed {
 }
 
 const PlayerSlider: React.FC<Props> = ({
+  isMainExperiment,
   counter,
   setCounter,
   numWavCombination,
@@ -72,7 +74,6 @@ const PlayerSlider: React.FC<Props> = ({
     console.log(isPlayed);
     const bothPlayed = isPlayed.A && isPlayed.B;
     if (bothPlayed) {
-      console.log("foo");
       setIsBothPlayed(true);
     }
   }, [isPlayed, setIsBothPlayed]);
@@ -104,13 +105,15 @@ const PlayerSlider: React.FC<Props> = ({
       nodeA.pause();
       nodeB.pause();
     }
-    ipcRenderer.send("write-value-to-file", {
-      dataPath,
-      counter,
-      value,
-      aFileName,
-      bFileName,
-    });
+    if (isMainExperiment) {
+      ipcRenderer.send("write-value-to-file", {
+        dataPath,
+        counter,
+        value,
+        aFileName,
+        bFileName,
+      });
+    }
     if (counter === numWavCombination) {
       history.push("/end");
       return;
