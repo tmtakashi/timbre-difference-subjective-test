@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -20,6 +20,14 @@ const Home: React.FC<Props> = ({
 }) => {
   const history = useHistory();
   const [isPathSelected, setIsPathSelected] = useState(false);
+
+  // for returning after ending
+  useEffect(() => {
+    setParticipant("");
+    setDataPath("");
+    setIsPathSelected(false);
+  }, []);
+
   const handleOnClickNext = async () => {
     const { goNext, dataFilePath } = await ipcRenderer.invoke(
       "request-save-file",
