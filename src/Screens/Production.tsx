@@ -6,6 +6,7 @@ import FolderOpenIcon from "@material-ui/icons/FolderOpen";
 import Button from "@material-ui/core/Button";
 import getCombinations from "../utils/getCombinations";
 import shuffle from "../utils/shuffle";
+import SelectWavDirectory from "./SelectWavDirectory";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { ipcRenderer } = require("electron");
 
@@ -22,8 +23,8 @@ const Production: React.FC<Props> = ({ dataPath }) => {
   const [counter, setCounter] = useState(1);
 
   const onClickSelectDir = () => {
-    ipcRenderer.send("request-production-wav-list");
-    ipcRenderer.on("production-wav-list-reply", (event: any, arg: any) => {
+    ipcRenderer.send("request-wav-list");
+    ipcRenderer.on("wav-list-reply", (event: any, arg: any) => {
       const cmb = shuffle(getCombinations(arg));
       setWavDirectory(arg);
       setCombinations(cmb);
@@ -42,32 +43,11 @@ const Production: React.FC<Props> = ({ dataPath }) => {
   return (
     <>
       {!filesSet && (
-        <Container>
-          <div
-            style={{
-              textAlign: "center",
-              marginTop: "200px",
-            }}
-          >
-            <Button
-              style={{ marginBottom: "50px" }}
-              onClick={onClickSelectDir}
-              variant="contained"
-              startIcon={<FolderOpenIcon />}
-            >
-              Select sound file directory
-            </Button>
-            {wavDirectory && <div>{wavDirectory.length} wav files loaded.</div>}
-            <br></br>
-            <Button
-              variant="contained"
-              onClick={onBeginExperiment}
-              endIcon={<NavigateNextIcon />}
-            >
-              Begin Experiment
-            </Button>
-          </div>
-        </Container>
+        <SelectWavDirectory
+          onClickSelectDir={onClickSelectDir}
+          onBeginExperiment={onBeginExperiment}
+          wavDirectory={wavDirectory}
+        />
       )}
       {filesSet && (
         <>
