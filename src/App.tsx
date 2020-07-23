@@ -4,7 +4,7 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/core/styles";
 
 import Home from "./Screens/Home";
-import Production from "./Screens/Production";
+import Experiment from "./Screens/Experiment";
 import End from "./Screens/End";
 
 const theme = createMuiTheme({
@@ -39,8 +39,11 @@ const Main = withRouter(({ location }) => {
           />
         )}
       </Route>
-      <Route path="/production">
-        <Production dataPath={dataPath} />
+      <Route path="/main">
+        <Experiment isMainExperiment={true} dataPath={dataPath} />
+      </Route>
+      <Route path="/practice">
+        <Experiment isMainExperiment={false} dataPath={dataPath} />
       </Route>
       <Route path="/end">
         <End />

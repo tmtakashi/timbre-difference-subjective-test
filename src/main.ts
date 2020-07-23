@@ -62,7 +62,7 @@ ipcMain.handle("request-save-file", (event: typeof IpcMainEvent, arg: any) => {
   return { goNext: true, dataFilePath };
 });
 
-ipcMain.on("request-production-wav-list", (event: any, arg: any) => {
+ipcMain.on("request-wav-list", (event: any, arg: any) => {
   dialog
     .showOpenDialog(win, {
       properties: ["openDirectory"],
@@ -77,7 +77,7 @@ ipcMain.on("request-production-wav-list", (event: any, arg: any) => {
         const fullPathFileList = fileList.map((file: string) => {
           return result.filePaths[0] + "/" + file;
         });
-        event.reply("production-wav-list-reply", fullPathFileList);
+        event.reply("wav-list-reply", fullPathFileList);
         return;
       }
     })

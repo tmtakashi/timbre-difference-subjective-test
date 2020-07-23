@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import PlayerSlider from "../components/PlayerSlider";
 import Container from "@material-ui/core/Container";
-import NavigateNextIcon from "@material-ui/icons/NavigateNext";
-import FolderOpenIcon from "@material-ui/icons/FolderOpen";
-import Button from "@material-ui/core/Button";
 import getCombinations from "../utils/getCombinations";
 import shuffle from "../utils/shuffle";
 import SelectWavDirectory from "./SelectWavDirectory";
@@ -12,9 +9,10 @@ const { ipcRenderer } = require("electron");
 
 interface Props {
   dataPath: string;
+  isMainExperiment: boolean;
 }
 
-const Production: React.FC<Props> = ({ dataPath }) => {
+const Experiment: React.FC<Props> = ({ dataPath, isMainExperiment }) => {
   const [filesSet, setFilesSet] = useState(false);
   const [wavDirectory, setWavDirectory] = useState("");
   const [combinations, setCombinations] = useState([[]] as string[][]);
@@ -67,6 +65,7 @@ const Production: React.FC<Props> = ({ dataPath }) => {
               <span style={{ fontWeight: "bold" }}>{value}</span>
             </div>
             <PlayerSlider
+              isMainExperiment={isMainExperiment}
               counter={counter}
               setCounter={setCounter}
               numWavCombination={numWavCombination}
@@ -84,4 +83,4 @@ const Production: React.FC<Props> = ({ dataPath }) => {
   );
 };
 
-export default Production;
+export default Experiment;
