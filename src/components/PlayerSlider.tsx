@@ -4,12 +4,14 @@ import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Slider from "@material-ui/core/Slider";
+import { useHistory } from "react-router-dom";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { ipcRenderer } = require("electron");
 
 interface Props {
   counter: number;
   setCounter: React.Dispatch<React.SetStateAction<number>>;
+  numWavCombination: number;
   aFileName: string;
   bFileName: string;
   value: number;
@@ -25,6 +27,7 @@ interface IsPlayed {
 const PlayerSlider: React.FC<Props> = ({
   counter,
   setCounter,
+  numWavCombination,
   aFileName,
   bFileName,
   value,
@@ -38,6 +41,7 @@ const PlayerSlider: React.FC<Props> = ({
   const sliderRef = useRef<HTMLSpanElement>(null);
   const refA = useRef<HTMLAudioElement>(null);
   const refB = useRef<HTMLAudioElement>(null);
+  const history = useHistory();
 
   useEffect(() => {
     const nodeA = refA.current;
@@ -107,6 +111,10 @@ const PlayerSlider: React.FC<Props> = ({
       aFileName,
       bFileName,
     });
+    if (counter === numWavCombination) {
+      history.push("/end");
+      return;
+    }
     setCounter(counter + 1);
     setIsPlaying(false);
     setValue(5);

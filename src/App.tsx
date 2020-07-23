@@ -5,6 +5,7 @@ import { ThemeProvider } from "@material-ui/core/styles";
 
 import Home from "./Screens/Home";
 import Production from "./Screens/Production";
+import End from "./Screens/End";
 
 const theme = createMuiTheme({
   palette: {
@@ -28,16 +29,21 @@ const Main = withRouter(({ location }) => {
   const [dataPath, setDataPath] = useState("");
   return (
     <div>
-      {location.pathname === "/" && (
-        <Home
-          participant={participant}
-          setParticipant={setParticipant}
-          dataPath={dataPath}
-          setDataPath={setDataPath}
-        />
-      )}
+      <Route path="/">
+        {location.pathname === "/" && (
+          <Home
+            participant={participant}
+            setParticipant={setParticipant}
+            dataPath={dataPath}
+            setDataPath={setDataPath}
+          />
+        )}
+      </Route>
       <Route path="/production">
         <Production dataPath={dataPath} />
+      </Route>
+      <Route path="/end">
+        <End />
       </Route>
     </div>
   );

@@ -89,6 +89,7 @@ const Production: React.FC<Props> = ({ dataPath }) => {
             <PlayerSlider
               counter={counter}
               setCounter={setCounter}
+              numWavCombination={numWavCombination}
               aFileName={combinations[counter - 1][0]}
               bFileName={combinations[counter - 1][1]}
               onSliderChange={handleChange}
